@@ -6,12 +6,12 @@ public record WeatherApiResponse(
         Response response) {
 
     public record Response(
-            Header header,
+//            Header header,
             Body body) {}
-
-    public record Header(
-            String resultCode,
-            String resultMsg) {}
+//
+//    public record Header(
+//            String resultCode,
+//            String resultMsg) {}
 
     public record Body(
             String dataType,

@@ -1,5 +1,7 @@
 package ballpark.weather;
 
+import com.fasterxml.jackson.core.JsonParser;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,5 +23,10 @@ public class GetWeatherService {
 
         return responseData;
 
+    }
+
+    public WeatherWeeklyApiResponse getWeeklyWeatherInfo(String baseDate, String baseTime, int nx, int ny) {
+        WeatherWeeklyApiResponse responseWeekdata = createClient.getWeeklyApi(baseDate,baseTime, nx, ny);
+        return responseWeekdata;
     }
 }
