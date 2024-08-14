@@ -21,6 +21,15 @@ public class GetWeatherService {
                                          int ny) {
         WeatherApiResponse responseData = createClient.getApi(base_date,base_time, nx, ny);
 
+//        base_date
+//        base_time
+//        nx
+//        ny
+
+//        실시간 데이터 추출
+//        받아야 할 값 :
+
+
         return responseData;
 
     }
@@ -29,4 +38,5 @@ public class GetWeatherService {
         WeatherWeeklyApiResponse responseWeekdata = createClient.getWeeklyApi(baseDate,baseTime, nx, ny);
         return responseWeekdata;
     }
+
 }

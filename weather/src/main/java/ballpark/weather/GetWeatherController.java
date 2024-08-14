@@ -19,7 +19,7 @@ public class GetWeatherController {
     }
 
     @GetMapping("/current")
-    public void getCurrentWeather(@RequestParam(required = false) String serviceKey,
+    public WeatherApiResponse getCurrentWeather(@RequestParam(required = false) String serviceKey,
                                      @RequestParam(required = false) String numOfRows,
                                      @RequestParam(required = false) String pageNo,
                                      @RequestParam(required = false) String dataType,
@@ -27,7 +27,7 @@ public class GetWeatherController {
                                      @RequestParam String base_time,
                                      @RequestParam int nx,
                                      @RequestParam int ny) {
-        getWeatherService.getWeatherInfo(base_date, base_time, nx, ny);
+        return getWeatherService.getWeatherInfo(base_date, base_time, nx, ny);
     }
 
     @GetMapping("/weekly")
