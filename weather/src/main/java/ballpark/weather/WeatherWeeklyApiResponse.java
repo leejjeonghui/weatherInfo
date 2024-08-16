@@ -1,4 +1,6 @@
 package ballpark.weather;
 
-public record WeatherWeeklyApiResponse() {
+public record WeatherWeeklyApiResponse(
+
+) {
 }

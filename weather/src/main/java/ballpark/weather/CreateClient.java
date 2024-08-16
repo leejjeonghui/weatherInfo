@@ -1,81 +1,78 @@
 package ballpark.weather;
 
-import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.http.MediaType;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
+
+
+
 
 @Service
 public class CreateClient {
-//    private String baseDate = "20240812";
-//    private String baseTime = "0600";
-//    private int nx = 37;
-//    private int ny = 127;
-
-    public WeatherApiResponse getApi(String baseDate, String baseTime, int nx, int ny) {
+    public WeatherApiResponse getApi(String stadium,
+                                     String home,
+                                     String away,
+                                     String leid) {
         Logger logger = LoggerFactory.getLogger(RestClient.class);
 
-        String baseUrl = "http://apis.data.go.kr";
-        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(baseUrl);
-        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("stadium",stadium);
+        formData.add("home",home);
+        formData.add("away",away);
+        formData.add("leid",leid);
 
-        RestClient restClient = RestClient.builder()
-                .uriBuilderFactory(factory)
-                .requestInterceptor((request, body, execution) -> {
-                    logger.info("다음 URL로 요청 보냄: " + request.getURI());
-                    return execution.execute(request, body);
-                })
-                .build();
-
-        final String SERVICE_KEY
-                = "fan6qvV7uujFYDrKX0KW%2BnHIexl%2FmW29PrscapMn5YsWn4ALH0u9LOd%2BFimSjEi37%2FvPjCPNYXEH6IkfdAHjBw%3D%3D";
-
-        WeatherApiResponse body = restClient.get()
-                .uri(UriBuilder -> UriBuilder
-                        .path("/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst")
-                        .queryParam("serviceKey", SERVICE_KEY)
-                        .queryParam("numOfRows", 10)
-                        .queryParam("pageNo", 1)
-                        .queryParam("dataType", "JSON")
-                        .queryParam("base_date", baseDate)
-                        .queryParam("base_time", baseTime)
-                        .queryParam("nx", nx)
-                        .queryParam("ny", ny)
-                        .build())
+        RestClient restClient = RestClient.create();
+        String body = restClient.post()
+                .uri("https://www.koreabaseball.com/ws/Schedule.asmx/GetStadiumWeather")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
                 .retrieve()
-                .body(WeatherApiResponse.class);
+                .body(String.class);
 
         System.out.println("body = " + body);
-        return body;
 
+        JSONObject jsonObject = new JSONObject(body);
+
+        return new WeatherApiResponse(
+                jsonObject.getString("stadium"),
+                jsonObject.getString("stadiumCode"),
+                jsonObject.getString("date"),
+                jsonObject.getString("castDate"),
+                jsonObject.getString("awayCode"),
+                jsonObject.getString("awayTeam"),
+                jsonObject.getString("homeCode"),
+                jsonObject.getString("homeTeam"),
+                jsonObject.getString("icon"),
+                jsonObject.getString("iconName"),
+                jsonObject.getFloat("temp"),
+                jsonObject.getString("dust"),
+                jsonObject.getString("dustIcon"),
+                jsonObject.getString("microDust"),
+                jsonObject.getString("microDustIcon"),
+                jsonObject.getString("rainIcon"),
+                jsonObject.getString("rain"),
+                jsonObject.getString("humiIcon"),
+                jsonObject.getFloat("humi"),
+                jsonObject.getFloat("windIcon"),
+                jsonObject.getFloat("wind"),
+                jsonObject.getString("today"),
+                jsonObject.getString("todayTime"),
+                jsonObject.getString("tomorrow"),
+                jsonObject.getString("tomorrowTime"),
+                jsonObject.getString("aftertomorrow"),
+                jsonObject.getString("aftertomorrowTime")
+        );
     }
 
-    public WeatherWeeklyApiResponse getWeeklyApi(String baseDate, String baseTime, int nx, int ny) {
-        Logger logger = LoggerFactory.getLogger(RestClient.class);
+    public WeatherWeeklyApiResponse getWeeklyApi(String stadium) {
 
-        String baseUrl = "http://apis.data.go.kr";
-        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory(baseUrl);
-        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
-
-        RestClient restClient = RestClient.builder()
-                .uriBuilderFactory(factory)
-                .requestInterceptor((request, body, execution) -> {
-                    logger.info("다음 URL로 요청 보냄: " + request.getURI());
-                    return execution.execute(request, body);
-                })
-                .build();
-
-        final String SERVICE_KEY
-                = "fan6qvV7uujFYDrKX0KW%2BnHIexl%2FmW29PrscapMn5YsWn4ALH0u9LOd%2BFimSjEi37%2FvPjCPNYXEH6IkfdAHjBw%3D%3D";
-
-
-
-        return null;
+        return new WeatherWeeklyApiResponse()
+                ;
     }
 }
