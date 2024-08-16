@@ -1,4 +1,4 @@
-package ballpark.weather;
+package ballpark.weather.todayweatherinfodto;
 
 public record RequestStadiumInfo(
         String stadium,

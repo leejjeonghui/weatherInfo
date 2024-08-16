@@ -1,11 +1,12 @@
 package ballpark.weather;
 
-import com.fasterxml.jackson.core.JsonParser;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONObject;
-import org.springframework.http.ResponseEntity;
+import ballpark.weather.todaygamedto.GameApiResponse;
+import ballpark.weather.todaygamedto.RequestGameInfo;
+import ballpark.weather.todayweatherinfodto.RequestStadiumInfo;
+import ballpark.weather.todayweatherinfodto.WeatherApiResponse;
+import ballpark.weather.weeklyweatherinfodto.RequestStadium;
+import ballpark.weather.weeklyweatherinfodto.WeatherWeeklyApiResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class GetWeatherService {
@@ -17,7 +18,7 @@ public class GetWeatherService {
 
     //실시간 데이터 추출
     public WeatherApiResponse getWeatherInfo(RequestStadiumInfo requestStadiumInfo) {
-        WeatherApiResponse responseData = createClient.getApi(
+        WeatherApiResponse responseData = createClient.getCurrentWeatherApi(
                 requestStadiumInfo.stadium(),
                 requestStadiumInfo.home(),
                 requestStadiumInfo.away(),
@@ -26,9 +27,13 @@ public class GetWeatherService {
 
     }
 
-    public WeatherWeeklyApiResponse getWeeklyWeatherInfo(RequestStadium requestStadium) {
-        WeatherWeeklyApiResponse responseWeekdata = createClient.getWeeklyApi(requestStadium.stadium());
+    public WeatherWeeklyApiResponse getWeeklyWeatherInfo(RequestStadium request) {
+        WeatherWeeklyApiResponse responseWeekdata = createClient.getWeeklyWeatherApi(request.stadium());
         return responseWeekdata;
     }
 
+    public GameApiResponse getGameInfo(RequestGameInfo request) {
+        GameApiResponse gameApiResponse = createClient.getGameInfoApi(request.gameDate(),"1","0,1,2,3,4,5,6,7,8,9","1");
+        return gameApiResponse;
+    }
 }

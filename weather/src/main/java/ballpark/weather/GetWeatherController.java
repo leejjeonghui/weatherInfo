@@ -1,9 +1,11 @@
 package ballpark.weather;
 
-import org.apache.catalina.valves.CrawlerSessionManagerValve;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONObject;
-import org.springframework.http.ResponseEntity;
+import ballpark.weather.todaygamedto.GameApiResponse;
+import ballpark.weather.todaygamedto.RequestGameInfo;
+import ballpark.weather.todayweatherinfodto.RequestStadiumInfo;
+import ballpark.weather.todayweatherinfodto.WeatherApiResponse;
+import ballpark.weather.weeklyweatherinfodto.RequestStadium;
+import ballpark.weather.weeklyweatherinfodto.WeatherWeeklyApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/weather")
@@ -23,8 +25,12 @@ public class GetWeatherController {
         return getWeatherService.getWeatherInfo(requestStadiumInfo);
     }
     @GetMapping("/weekly")
-    public WeatherWeeklyApiResponse getWeeklyWeather(@RequestBody RequestStadium requestStadium) {
-        return getWeatherService.getWeeklyWeatherInfo(requestStadium);
+    public WeatherWeeklyApiResponse getWeeklyWeather(@RequestBody RequestStadium request) {
+        return getWeatherService.getWeeklyWeatherInfo(request);
+    }
+    @GetMapping("/todaygames")
+    public GameApiResponse getGameData(@RequestBody RequestGameInfo request) {
+        return getWeatherService.getGameInfo(request);
     }
 
 
