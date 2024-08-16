@@ -1,6 +1,4 @@
-package ballpark.weather;
-
-import java.util.List;
+package ballpark.weather.todayweatherinfodto;
 
 public record WeatherApiResponse(
         String stadium, String stadiumCode, String date, String castDate, String awayCode,

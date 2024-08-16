@@ -1,5 +1,8 @@
 package ballpark.weather;
 
+import ballpark.weather.todaygamedto.GameApiResponse;
+import ballpark.weather.todayweatherinfodto.WeatherApiResponse;
+import ballpark.weather.weeklyweatherinfodto.WeatherWeeklyApiResponse;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,15 +13,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
-
-
-
 @Service
 public class CreateClient {
-    public WeatherApiResponse getApi(String stadium,
-                                     String home,
-                                     String away,
-                                     String leid) {
+    public WeatherApiResponse getCurrentWeatherApi(String stadium,
+                                                   String home,
+                                                   String away,
+                                                   String leid) {
         Logger logger = LoggerFactory.getLogger(RestClient.class);
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -70,9 +70,13 @@ public class CreateClient {
         );
     }
 
-    public WeatherWeeklyApiResponse getWeeklyApi(String stadium) {
+    public WeatherWeeklyApiResponse getWeeklyWeatherApi(String stadium) {
 
-        return new WeatherWeeklyApiResponse()
-                ;
+        return new WeatherWeeklyApiResponse();
+    }
+
+    public GameApiResponse getGameInfoApi(String gameDate, String leId, String srId, String headerCk) {
+
+        return new GameApiResponse();
     }
 }
