@@ -3,6 +3,7 @@ package ballpark.weather;
 import ballpark.weather.todaygamedto.GameApiResponse;
 import ballpark.weather.todayweatherinfodto.WeatherApiResponse;
 import ballpark.weather.weeklyweatherinfodto.WeatherWeeklyApiResponse;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CreateClient {
@@ -71,12 +75,70 @@ public class CreateClient {
     }
 
     public WeatherWeeklyApiResponse getWeeklyWeatherApi(String stadium) {
+        Logger logger = LoggerFactory.getLogger(RestClient.class);
 
-        return new WeatherWeeklyApiResponse();
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("stadium",stadium);
+
+        RestClient restClient = RestClient.create();
+        String body = restClient.post()
+                .uri("https://www.koreabaseball.com/ws/Schedule.asmx/GetStadiumWeekly")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
+                .retrieve()
+                .body(String.class);
+
+        System.out.println("body = " + body);
+
+        JSONObject jsonObject = new JSONObject(body);
+        JSONArray arr = (JSONArray) jsonObject.get("weatherList");
+        List<WeatherWeeklyApiResponse.Weather> li = new ArrayList<>();
+
+        for (Object jsonObj : arr) {
+            JSONObject obj = (JSONObject) jsonObj;
+
+            li.add(new WeatherWeeklyApiResponse.Weather(
+                    obj.getString("day"),
+                    obj.getString("iconCd"),
+                    obj.getString("iconName"),
+                    obj.getDouble("lowValue"),
+                    obj.getDouble("maxValue"),
+                    obj.getInt("tempMax"),
+                    obj.getInt("tempMin"),
+                    obj.getInt("rain")));
+        }
+
+
+
+
+        return new WeatherWeeklyApiResponse(
+                jsonObject.getString("regDt"),
+                jsonObject.getDouble("height"),
+                li
+        );
     }
 
     public GameApiResponse getGameInfoApi(String gameDate, String leId, String srId, String headerCk) {
+        Logger logger = LoggerFactory.getLogger(RestClient.class);
 
-        return new GameApiResponse();
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("gameDate",gameDate);
+        formData.add("leId",leId);
+        formData.add("srId",srId);
+        formData.add("headerCk",headerCk);
+
+        RestClient restClient = RestClient.create();
+        String body = restClient.post()
+                .uri("https://www.koreabaseball.com/ws/Schedule.asmx/GetTodayGames")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
+                .retrieve()
+                .body(String.class);
+
+        System.out.println("body = " + body);
+
+        JSONObject jsonObject = new JSONObject(body);
+
+        return null;//new GameApiResponse();
     }
 }
