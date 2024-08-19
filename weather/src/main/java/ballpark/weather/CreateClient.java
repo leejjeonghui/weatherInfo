@@ -122,11 +122,15 @@ public class CreateClient {
 
     public GameApiResponse getGameInfoApi(String gameDate, String leId, String srId, String headerCk) {
         try {
+//            아래 3개 변수 고정값(으로 추정. 확실하지않음.)
+//            leId="1";
+//            srId="0,1,2,3,4,5,6,7,8,9";
+//            headerCk="1";
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             formData.add("gameDate", gameDate);
-            formData.add("leId", leId);
-            formData.add("srId", srId);
-            formData.add("headerCk", headerCk);
+            formData.add("leId", "1");
+            formData.add("srId", "0,1,2,3,4,5,6,7,8,9");
+            formData.add("headerCk", "1");
 
             RestClient restClient = RestClient.create();
             String body = restClient.post()
