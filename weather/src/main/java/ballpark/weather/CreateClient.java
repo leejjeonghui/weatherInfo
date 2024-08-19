@@ -4,6 +4,7 @@ import ballpark.weather.todaygamedto.GameApiResponse;
 import ballpark.weather.todayweatherinfodto.WeatherApiResponse;
 import ballpark.weather.weeklyweatherinfodto.WeatherWeeklyApiResponse;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,9 @@ import java.util.List;
 
 @Service
 public class CreateClient {
+    private static final Logger logger =
+            LoggerFactory.getLogger(CreateClient.class);
+
     public WeatherApiResponse getCurrentWeatherApi(String stadium,
                                                    String home,
                                                    String away,
@@ -26,10 +30,10 @@ public class CreateClient {
         Logger logger = LoggerFactory.getLogger(RestClient.class);
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("stadium",stadium);
-        formData.add("home",home);
-        formData.add("away",away);
-        formData.add("leid",leid);
+        formData.add("stadium", stadium);
+        formData.add("home", home);
+        formData.add("away", away);
+        formData.add("leid", leid);
 
         RestClient restClient = RestClient.create();
         String body = restClient.post()
@@ -78,7 +82,7 @@ public class CreateClient {
         Logger logger = LoggerFactory.getLogger(RestClient.class);
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("stadium",stadium);
+        formData.add("stadium", stadium);
 
         RestClient restClient = RestClient.create();
         String body = restClient.post()
@@ -109,8 +113,6 @@ public class CreateClient {
         }
 
 
-
-
         return new WeatherWeeklyApiResponse(
                 jsonObject.getString("regDt"),
                 jsonObject.getDouble("height"),
@@ -119,26 +121,62 @@ public class CreateClient {
     }
 
     public GameApiResponse getGameInfoApi(String gameDate, String leId, String srId, String headerCk) {
-        Logger logger = LoggerFactory.getLogger(RestClient.class);
+        try {
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("gameDate", gameDate);
+            formData.add("leId", leId);
+            formData.add("srId", srId);
+            formData.add("headerCk", headerCk);
 
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("gameDate",gameDate);
-        formData.add("leId",leId);
-        formData.add("srId",srId);
-        formData.add("headerCk",headerCk);
+            RestClient restClient = RestClient.create();
+            String body = restClient.post()
+                    .uri("https://www.koreabaseball.com/ws/Schedule.asmx/GetTodayGames")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(formData)
+                    .retrieve()
+                    .body(String.class);
 
-        RestClient restClient = RestClient.create();
-        String body = restClient.post()
-                .uri("https://www.koreabaseball.com/ws/Schedule.asmx/GetTodayGames")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(formData)
-                .retrieve()
-                .body(String.class);
+            System.out.println("body = " + body);
 
-        System.out.println("body = " + body);
+            JSONObject jsonObject = new JSONObject(body);
 
-        JSONObject jsonObject = new JSONObject(body);
+            int dateDiff = jsonObject.getInt("dateDiff");
+            List<GameApiResponse.Game> gameList = new ArrayList<>();
 
-        return null;//new GameApiResponse();
+            JSONArray gamesArray = jsonObject.getJSONArray("gameList");
+            for (int i = 0; i < gamesArray.length(); i++) {
+                JSONObject gameObject = gamesArray.getJSONObject(i);
+                gameList.add(new GameApiResponse.Game(
+                        gameObject.getString("stadium"),
+                        gameObject.getString("stadiumFullName"),
+                        gameObject.getString("homeCode"),
+                        gameObject.getString("homeName"),
+                        gameObject.getString("awayCode"),
+                        gameObject.getString("awayName"),
+                        gameObject.getString("gameTime"),
+                        gameObject.getInt("gameSc"),
+                        gameObject.getInt("cancelSc"),
+                        gameObject.getString("icon"),
+                        gameObject.getString("iconName"),
+                        gameObject.getFloat("temp"),
+                        gameObject.getInt("rain"),
+                        gameObject.getString("gameIcon"),
+                        gameObject.getString("gameIconName"),
+                        gameObject.getFloat("gameTemp"),
+                        gameObject.getInt("gameRain"),
+                        gameObject.getString("gameTimeOver"),
+                        gameObject.getString("gameId"),
+                        gameObject.getString("dust"),
+                        gameObject.getString("dustCode")
+                ));
+            }
+            return new GameApiResponse(dateDiff, gameList);
+        } catch (JSONException e) {
+            logger.error("JSON parsing error occurred: ", e);
+            throw new RuntimeException("JSON parsing error", e);
+        }
     }
 }
+
+
+
