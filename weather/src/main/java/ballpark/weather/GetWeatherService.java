@@ -33,7 +33,7 @@ public class GetWeatherService {
     }
 
     public GameApiResponse getGameInfo(RequestGameInfo request) {
-        GameApiResponse gameApiResponse = createClient.getGameInfoApi(request.gameDate(),"1","0,1,2,3,4,5,6,7,8,9","1");
+        GameApiResponse gameApiResponse = createClient.getGameInfoApi(request.gameDate(),request.leId(),request.srId(), request.headerCk());
         return gameApiResponse;
     }
 }
