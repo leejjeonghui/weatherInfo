@@ -20,15 +20,15 @@ public class GetWeatherController {
     }
 
     // Body를 어디서 받아야할지
-    @GetMapping("/current")
+    @PostMapping("/current")
     public WeatherApiResponse getCurrentWeather(@RequestBody RequestStadiumInfo requestStadiumInfo) {
         return getWeatherService.getWeatherInfo(requestStadiumInfo);
     }
-    @GetMapping("/weekly")
+    @PostMapping("/weekly")
     public WeatherWeeklyApiResponse getWeeklyWeather(@RequestBody RequestStadium request) {
         return getWeatherService.getWeeklyWeatherInfo(request);
     }
-    @GetMapping("/todaygames")
+    @PostMapping("/todaygames")
     public GameApiResponse getGameData(@RequestBody RequestGameInfo request) {
         return getWeatherService.getGameInfo(request);
     }
