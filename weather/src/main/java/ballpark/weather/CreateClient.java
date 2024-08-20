@@ -64,7 +64,7 @@ public class CreateClient {
                 jsonObject.getString("microDust"),
                 jsonObject.getString("microDustIcon"),
                 jsonObject.getString("rainIcon"),
-                jsonObject.getInt("rain"),
+                jsonObject.getString("rain"),
                 jsonObject.getString("humiIcon"),
                 jsonObject.getFloat("humi"),
                 jsonObject.getFloat("windIcon"),

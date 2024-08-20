@@ -17,7 +17,7 @@ public record WeatherApiResponse(
         String microDust,
         String microDustIcon,
         String rainIcon,
-        int rain,
+        String rain,
         String humiIcon,
         float humi,
         float windIcon,

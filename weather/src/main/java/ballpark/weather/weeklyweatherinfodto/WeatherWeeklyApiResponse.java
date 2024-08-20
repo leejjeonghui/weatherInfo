@@ -15,6 +15,6 @@ public record WeatherWeeklyApiResponse(
             double maxValue,
             int tempMax,
             int tempMin,
-            int rain) {
+            int rain ) {
     }
 }
